@@ -14,6 +14,8 @@ import Circles from "../components/Circles";
 const placeholder = {
   uri: "https://i.pinimg.com/736x/39/8f/ff/398fff0b30ef066f3e2a54d87b761bb2.jpg",
 };
+import { useRef, useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -44,22 +46,37 @@ const RecordVideoScreen = ({ navigation }) => {
     ]);
   };
 
+  useEffect(() => {
+    console.log("State updated:", imageUri);
+}, [imageUri]);
+
+  
+  const picturefromCamera = ""
+
   const openCamera = async () => {
+    console.log("hello")
+    await ImagePicker.requestCameraPermissionsAsync()
+    
     const result = await ImagePicker.launchCameraAsync({
       // can be changed to VideosOnly
-      mediaTypes: ImagePicker.MediaTypeOptions.ImagesOnly,
-      width: 300,
-      height: 200,
-      cropping: true,
+      base64: true,
+      quality: 1,
+      exif: false,
     });
 
-    if (result.cancelled) {
-      console.log("User cancelled image picker");
-    } else {
-      setImageUri(result.assets[0].uri);
-      setIsImageAdded(true);
-      console.log("Image URI:", result.assets[0].uri);
-    }
+
+
+    // console.log("result before state", bet)
+
+    setImageUri(result.assets[0]);
+
+
+    // if (result.cancelled) {
+    //   console.log("User cancelled image picker");
+    // } else {
+    //   setImageUri(result.assets[0].uri);
+    //   console.log("Image URI:", result.assets[0].uri);
+    // }
   };
 
   const openLibrary = async () => {
@@ -81,52 +98,49 @@ const RecordVideoScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.background}>
-      <Circles />
-      <View style={styles.container}>
-        <Text
-          style={styles.title}
-        >
-          Record your surroundings.
-        </Text>
-        <View style={styles.imageSection}>
-          <Text style={styles.button} onPress={showMessage}>
-            Pick an image
-          </Text>
-          {isImageAdded ? (
-            <View>
-              <Image
-                source={{ uri: imageUri }}
-                style={{ width: 300, height: 200 }}
-              />
-              <Text
-                onPress={() => {
-                  setImageUri("");
-                  setIsImageAdded(false);
-                }}
-                style={styles.button}
-              >
-                Remove image
-              </Text>
-            </View>
-          ) : (
-            null
-          )}
-          <View style={styles.bottomContainer}>
-            <Text
-              onPress={() => {
-                if (imageUri) {
-                  navigation.navigate("Mood");
-                } else {
-                  Alert.alert("Please upload an image.");
-                }
-              }}
-              style={styles.continue}
-            >
-              Continue
-            </Text>
+    <View style={styles.container}>
+      <Text
+        style={styles.title}
+        onPress={() => {
+          navigation.navigate("RecordVideo");
+        }}
+      >
+        Record your surroundings.
+      </Text>
+      <View>
+        <Button title="Pick an image" onPress={showMessage} />
+        {imageUri && (
+          <View>
+          <Image
+            source={{ uri: imageUri.uri }}
+            style={{ width: 200, height: 200 }}
+          />
+          <Button title="Remove image" onPress={() => {
+            setImageUri("");
+          }}/>
           </View>
-        </View>
+        )}
+        <Button
+          title="Next"
+          onPress={async () => {
+            if (imageUri) {
+              try {
+                await AsyncStorage.setItem(
+                  "imageurl",
+                  imageUri.base64
+                );
+                console.log("image in storage")
+              } catch (error) {
+                // Error saving data
+                console.error('Error saving data', error)
+              }
+              
+              navigation.navigate("Mood");
+            } else {
+              Alert.alert("Please upload an image.");
+            }
+          }}
+        />
       </View>
       
     </View>

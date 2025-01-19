@@ -23,7 +23,7 @@ const LoginScreen = ({ navigation }) => {
     path: 'callback',
   });
 
-  //console.log('Redirect URI:', redirectUri); // Log to see the exact uri to register to spotify portal
+  console.log('Redirect URI:', redirectUri); // Log to see the exact uri to register to spotify portal
 
   _storeData = async (key, val) => {
     try {
@@ -54,7 +54,7 @@ const LoginScreen = ({ navigation }) => {
       const response = await axios.post('https://accounts.spotify.com/api/token', new URLSearchParams({
         grant_type: 'authorization_code',
         code: code,
-        redirect_uri: 'exp://10.19.135.72:8081/--/callback'
+        redirect_uri: 'exp://10.19.128.193:8081/--/callback'
       }), {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
@@ -71,18 +71,22 @@ const LoginScreen = ({ navigation }) => {
   }
 
   const fetchUserData = async (token) => {
+    console.log("token in fetch user", token)
     try {
       const response = await axios.get('https://api.spotify.com/v1/me', {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+
       let data = await response.data
+
+      console.log(data)
       let tempUser = {
         accessToken: token,
         display_name: data.display_name,
         id: data.id,
-        pic: data.images[0].url //0 300x300, 1 64x64
+        // pic: data.images[0].url //0 300x300, 1 64x64
       }
       setUser(tempUser);
       //setDisplayName(tempUser.display_name)
@@ -91,6 +95,7 @@ const LoginScreen = ({ navigation }) => {
       _storeData('user', tempUser)
       _retrieveData('user')
     } catch (error) {
+
       console.error('Error fetching data:', error.message);
       console.log(user)
     }
