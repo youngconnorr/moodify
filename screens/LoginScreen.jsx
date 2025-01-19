@@ -1,33 +1,43 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { View, Text, StyleSheet, Button, TextInput } from "react-native";
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 import { auth } from '../firebase'
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-
 const LoginScreen = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
-  const handleLogin = () => {
-    alert('attempt login')
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        alert("successful login")
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert("login failed")
-      });
+  const discovery = {
+    authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+    tokenEndpoint: 'https://accounts.spotify.com/api/token',
   };
+
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: 'CLIENT_ID',
+      scopes: ['user-read-email', 'playlist-modify-public'],
+      // To follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
+      // this must be set to false
+      usePKCE: false,
+      redirectUri: makeRedirectUri({
+        scheme: 'your.app'
+      }),
+    },
+    discovery
+  );
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { code } = response.params;
+    }
+  }, [response]);
+
   return (
     <View style={styles.container}>
-      <Text>dede</Text>
-      <TextInput placeholder="Email" value={email} onChangeText={text => setEmail(text)}/>
-      <TextInput placeholder="Password" value={password} onChangeText={text => setPassword(text)}/>
-      <Button title={"OOOOOOOOOOO"} onPress={handleLogin}></Button>
+      <Button
+        disabled={!request}
+        title="Login"
+        onPress={() => {
+          promptAsync();
+        }}
+      />
     </View>
   );
 };
