@@ -1,19 +1,20 @@
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const MainNavigation = () => {
+const ProfileScreen = () => {
   return (
-    <View style={styles.titleContainer}>
-      <Text style={styles.title}>Heyy</Text>
+    <View style={styles.container}>
+      <Text>Profile Screen</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
 });
 
-export default MainNavigation;
+export default ProfileScreen;
