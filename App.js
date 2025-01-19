@@ -8,7 +8,6 @@ import MakePlaylistScreen from "./screens/MakePlaylistScreen";
 import RecordVideoScreen from "./screens/RecordVideoScreen";
 import MoodScreen from "./screens/MoodScreen";
 import TimeScreen from "./screens/TimeScreen";
-import WeatherScreen from "./screens/WeatherScreen";
 
 const Stack = createStackNavigator();
 
@@ -23,7 +22,6 @@ export default function App() {
         <Stack.Screen name="RecordVideo" component={RecordVideoScreen} />
         <Stack.Screen name="Mood" component={MoodScreen} />
         <Stack.Screen name="Time" component={TimeScreen} />
-        <Stack.Screen name="Weather" component={WeatherScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </View>
