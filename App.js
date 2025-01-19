@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import React from "react";
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack"; 
@@ -13,6 +14,7 @@ import SongListScreen from './screens/SongListScreen3'
 const Stack = createStackNavigator();
 
 export default function App() {
+
   return (
     /* <StatusBar style="auto" /> */
     <View style={styles.container}>
