@@ -1,8 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, Alert, StyleSheet, Button } from "react-native";
 
-const MoodScreen = () => {
+const MoodScreen = ({navigation}) => {
   const emoji = ["😭", "😠", "😐", "🙂", "😃"];
   const [selectedMood, setSelectedMood] = useState("");
 
@@ -38,8 +38,8 @@ const MoodScreen = () => {
         <Button
           title="Next"
           onPress={() => {
-            if (imageUri) {
-              navigation.navigate("");
+            if (selectedMood.length != 0) {
+              navigation.navigate("Time");
             } else {
               Alert.alert("Please select a mood.");
             }
