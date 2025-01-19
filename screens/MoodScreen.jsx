@@ -2,9 +2,13 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, Alert, StyleSheet, Button } from "react-native";
 import Circles from "../components/Circles";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MoodScreen = ({ navigation }) => {
-  const emoji = ["😣", "😕", "😐", "🙂", "😃"];
+
+const MoodScreen = ({navigation}) => {
+  const emoji = ["😭", "😠", "😐", "🙂", "😃"];
+
+  const moods = {"😭":"depressed", "😠":"sad", "😐":"meh", "🙂":"happy", "😃":"ecstatic"}
   const [selectedMood, setSelectedMood] = useState("");
 
   React.useLayoutEffect(() => {
@@ -13,7 +17,7 @@ const MoodScreen = ({ navigation }) => {
 
   const onPress = (value) => {
     console.log(value);
-    setSelectedMood(value);
+    setSelectedMood(moods[value]);
   };
 
   const renderEmojis = () => {};
@@ -40,7 +44,7 @@ const MoodScreen = ({ navigation }) => {
             ))}
           </View>
         </View>
-        <View style={styles.next}>
+        {/* <View style={styles.next}>
           <Text
             onPress={() => {
               if (selectedMood.length != 0) {
@@ -53,9 +57,35 @@ const MoodScreen = ({ navigation }) => {
           >
             Continue
           </Text>
-        </View>
+        </View> */}
       </View>
       <Circles />
+      <View style={styles.next}>
+        <Button
+          title="Next"
+          onPress={async () => {
+            if (selectedMood.length != 0) {
+              try {
+                console.log("here")
+                console.log(selectedMood)
+                await AsyncStorage.setItem(
+                  "mood",
+                  selectedMood
+                );
+
+                console.log("emotion in storage")
+                
+              } catch (error) {
+                // Error saving data
+                console.error('Error saving data', error)
+              }
+              navigation.navigate("Time");
+            } else {
+              Alert.alert("Please select a mood.");
+            }
+          }}
+        />
+      </View>
     </View>
   );
 };

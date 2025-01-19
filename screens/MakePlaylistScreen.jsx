@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Circles from "../components/Circles";
+import fetchUserLikedSongs from "../findliked";
 
 const MakePlaylistScreen = ({ navigation }) => {
   React.useLayoutEffect(() => {
@@ -13,10 +14,11 @@ const MakePlaylistScreen = ({ navigation }) => {
         <Text
           style={styles.title}
           onPress={() => {
+            fetchUserLikedSongs()
             navigation.navigate("RecordVideo");
           }}
         >
-          Create a playlist.
+          Create a playlist
         </Text>
       </View>
       <Circles />

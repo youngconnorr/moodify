@@ -4,6 +4,12 @@ import { View, Text, StyleSheet, Button } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Location from "expo-location";
 import Circles from "../components/Circles";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import rank from '.././ai.js';
+import findWeather from "../weather.js";
+
+
+import { set } from "firebase/database";
 
 const TimeScreen = ({ navigation }) => {
   const [date, setDate] = useState(new Date());
@@ -12,6 +18,7 @@ const TimeScreen = ({ navigation }) => {
 
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [weather, setWeather] = useState("");
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
@@ -35,9 +42,13 @@ const TimeScreen = ({ navigation }) => {
 
       setLatitude(location.coords.latitude);
       setLongitude(location.coords.longitude);
+
+      // let weather = await findWeather(latitude, longitude);
+      // setWeather(weather)
     }
 
     getCurrentLocation();
+
   }, []);
   let text = "Waiting...";
   if (errorMsg) {
@@ -70,12 +81,6 @@ const TimeScreen = ({ navigation }) => {
         <View style={styles.weatherInstructions}>
           <Text style={styles.title}>Weather</Text>
           <Text style={styles.description}>The current weather is:</Text>
-          <View style={styles.time}>
-            <Text>
-              {longitude}
-              {latitude}
-            </Text>
-          </View>
         </View>
         <View style={styles.next}>
           <Text
@@ -87,6 +92,65 @@ const TimeScreen = ({ navigation }) => {
             Continue
           </Text>
         </View>
+      </View>
+      <View style={styles.next}>
+        <Button
+          title="Next"
+          onPress={async () => {
+            try {
+              const value = await AsyncStorage.getItem("mood");
+              if (value !== null) {
+                // We have data!!
+                const mood = value
+                console.log(mood);
+
+                try {
+                  const value = await AsyncStorage.getItem("imageurl");
+                  if (value !== null) {
+                    // We have data!!
+                    const imageURL = value
+                    console.log(imageURL);
+
+                    try {
+                      const value = await AsyncStorage.getItem("songs");
+                      if (value !== null) {
+                        // We have data!!
+                        const songs = JSON.parse(value)
+                        
+                        console.log("this is before rank")
+
+                        const topTen = await rank(imageURL, latitude, longitude, mood, songs);
+
+                        console.log(topTen)
+
+                        try {
+                          await AsyncStorage.setItem(
+                            "topten",
+                            JSON.stringify(topTen)
+                          );
+
+                          navigation.navigate("SongList");
+
+                        } catch (error) {
+                          // Error saving data
+                          console.error('Error saving data', error)
+                        }
+
+                      }
+                    } catch (error) {
+                      // Error retrieving data
+                    }
+                  }
+                } catch (error) {
+                  // Error retrieving data
+                }
+              }
+            } catch (error) {
+              // Error retrieving data
+            }
+            
+          }}
+        />
       </View>
     </View>
   );
