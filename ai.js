@@ -5,7 +5,6 @@ import findWeather from "./weather.js";
 import { EXPO_PUBLIC_OPEN_AI_API_KEY } from '@env'
 
 const OPEN_API_KEY = EXPO_PUBLIC_OPEN_AI_API_KEY;
-// const OPEN_API_KEY = "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"
 
 const openai = new OpenAI({apiKey: OPEN_API_KEY});
 
