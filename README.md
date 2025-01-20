@@ -1,4 +1,4 @@
-# moodify
+# 🎧 moodify
 
 Tech stack:
 - React Native
